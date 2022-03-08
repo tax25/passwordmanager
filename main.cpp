@@ -103,7 +103,7 @@ int main(void){
             + dbManager.quoteSql(webSiteOrAppName) + ", "
             + dbManager.quoteSql(generatedPassword) + ");";
           
-          std::cout << sqlInsertStatement << std::endl;
+//          std::cout << sqlInsertStatement << std::endl;
           
           exit = dbManager.insertIntoDB(sqlInsertStatement);
           if(exit != DB_SUCCESS){
@@ -136,14 +136,13 @@ int main(void){
               std::cout << "Ok, Insert the name of the app or website: " << std::endl;
               std::cin >> webOrAppNameToSearch;
               
-              // DATABASE: CERCA LA PWD E STAMPALA
               std::string sqlSearchStatement = "SELECT * FROM " 
                 + tableName 
                 + " WHERE "
                 + /*column name, i'm gonna put the name of the webOrAppNameToSearch, so: */ "WEBSITEORAPPNAME = "
                 + dbManager.quoteSql(webOrAppNameToSearch);
               // dbManager.getEverythingFromTable(tableName);
-              std::cout << sqlSearchStatement << std::endl;
+ //             std::cout << sqlSearchStatement << std::endl;
               
               bool exit = dbManager.querySomethingFromDB(sqlSearchStatement);
               if(exit != DB_SUCCESS){
@@ -154,7 +153,6 @@ int main(void){
               std::string dateOfCreation;
               std::cout << "Ok, Insert the date of the creation of the password (like this: dd-mm-yy)" << std::endl;
               std::cin >> dateOfCreation;
-              // DATABASE: CERCA LA PWD E STAMPALA
             }
           break;
           }
@@ -180,33 +178,36 @@ int main(void){
         
           // i use the first cell of the vector for numbers, the second for alphanumerical characters and the third for special ones. That's why in the function i use explicitely the first, second and third cell
           std::vector <bool> specialCharacters = askForSpecialCharacters(firstSpecialCharactersPrompt, secondSpecialCharactersPrompt, thirdSpecialCharactersPrompt, NUMBER_OF_CHARACTER_ARRAY_CELLS);
-        
-          for (bool elementoDue : specialCharacters){
-            std::cout << "Elemento dell'array booleano: "<< elementoDue << std::endl;
+          
+          /*
+          for (bool booleanArrayElement : specialCharacters){
+            std::cout << "Boolean array element: "<< booleanArrayElement << std::endl;
           }
-        
+          */
+
           newPassword = generatePassword(passwordLenght, specialCharacters);
           showGeneratedPassword(newPassword);
   
-          // DATABASE: UPDATE PASSWORD, RICORDATI DI PASSARE IL NOME DEL SITO/APP
           
         }else{
           std::cout << "Ok, insert the new password: " << std::endl;
           std::cin >> newPassword;
           std::cout << newPassword << std::endl;
-          // DATABASE: UPDATE PASSWORD, RICORDATI DI PASSARE IL NOME DEL SITO/APP
         }
 
-        // Creare l'sqlStatement 
+        // Create update statement
         std::string sqlUpdateStatement = "UPDATE " 
           + tableName +
           + " SET PASSWORD = "
           + dbManager.quoteSql(newPassword) 
           + " WHERE WEBSITEORAPPNAME = "
           + dbManager.quoteSql(webSiteOrAppName);
+       
         bool exit = dbManager.updateSomethingInDB(sqlUpdateStatement);
         if(exit != DB_SUCCESS){
           std::cout << "An error occured while trying to update the password" << std::endl;
+        }else{
+          std::cout << "Password updated successfully" << std::endl;
         }
         break;
   
