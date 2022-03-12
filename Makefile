@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -lsqlite3
+CFLAGS = -lsqlite3 -std=c++11
 
 all:
 	$(CC) main.cpp timeManager/timeManager.cpp DBManager/DBManager.cpp -o newPasswordManager $(CFLAGS)
