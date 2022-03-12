@@ -7,6 +7,7 @@ all:
 
 install:
 	sudo cp newPasswordManager /usr/local/bin
+	rm newPasswordManager
 
 clean:
 	sudo rm -r /usr/local/bin/newPasswordManager
