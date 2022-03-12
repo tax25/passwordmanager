@@ -12,6 +12,13 @@ enum DBState{
 
 };
 
+enum DBSearchState{
+
+  NAME_ALREADY_EXISTING = true,
+  NAME_NOT_EXISTING = false
+
+};
+
 
 class DBManager{
 
@@ -23,7 +30,7 @@ private:
   const std::string openingDBError = "An error occured while trying to open the database";
   
   bool generalMethodToDoSomethingToDB(bool query, std::string sqlInstruction, std::string specificErrorPromptIfOperationFails);
-
+  std::string privateQuoteSql(std::string stringToQuote_2); 
 public:
   void setDBName(std::string databaseName);
 
@@ -34,7 +41,8 @@ public:
   bool insertSomething();
   
   bool createTable(std::string tableName, std::vector<std::string> columnsNameAndType);
-  
+
+  bool isSomethingAlreadySavedWithSameName(std::string tableName, std::string name); // method strictly related to this project  
   // std::string createQueryStatement(std::string tableName, std::string parameter, std::string condition);
   
   // std::string createUpdateStatement(std::string tableName, std::string parameter, std::string condition);

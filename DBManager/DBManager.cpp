@@ -30,6 +30,9 @@ bool DBManager::generalMethodToDoSomethingToDB(bool query, std::string sqlInstru
   return DB_SUCCESS;
 }
 
+std::string DBManager::privateQuoteSql(std::string stringToQuote_2){
+  return std::string("'") + stringToQuote_2 + std::string("'");
+}
 
 void DBManager::setDBName(std::string databaseName){  
   dbName = databaseName;
@@ -40,7 +43,6 @@ int DBManager::callback(void *data, int argc, char** argv, char** azColName){
 
   // fprintf(stderr, "%s: ", (const char*)data);
   // printf("\n");
-   
   for (int i = 0; i < argc; i++) {
     printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
   }
@@ -144,6 +146,37 @@ bool DBManager::createTable(std::string tableName, std::vector<std::string> colu
   return DB_SUCCESS;
 }
 
+bool DBManager::isSomethingAlreadySavedWithSameName(std::string tableName, std::string name){
+  
+  std::string sqlSearchStatement = "SELECT * FROM " 
+    + tableName 
+    + " WHERE "
+    + /*column name, i'm gonna put the name of the webOrAppNameToSearch, so: */ "WEBSITEORAPPNAME = "
+    + privateQuoteSql(name);  
+
+  sqlite3 *database;
+  
+  int exit = 0;
+  char* errorMessage;
+  exit = sqlite3_open(dbName.c_str(), &database);
+  if(exit != SQLITE_OK){
+    std::cout << openingDBError << std::endl;
+    sqlite3_free(errorMessage);
+  }
+  struct sqlite3_stmt *selectStatement;
+    
+  exit = sqlite3_prepare_v2(database, sqlSearchStatement.c_str(), -1, &selectStatement, NULL);
+  if(exit == SQLITE_OK){
+
+    if(sqlite3_step(selectStatement) == SQLITE_ROW){
+      return NAME_ALREADY_EXISTING;
+    }else{
+      return NAME_NOT_EXISTING;
+    }
+  }else{
+    std::cerr << "ERROR WHILE COMPILING SQL STATEMENT, ERROR CODE: " << exit  << std::endl;
+  }
+}
 
 bool DBManager::insertIntoDB(std::string sqlInstruction){
   
@@ -153,9 +186,7 @@ bool DBManager::insertIntoDB(std::string sqlInstruction){
 
 
 bool DBManager::querySomethingFromDB(std::string sqlInstruction){
-
  return generalMethodToDoSomethingToDB(true, sqlInstruction, "An error occured while trying to fetch data from db"); 
-
 }
 
 

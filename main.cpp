@@ -87,6 +87,13 @@ int main(void){
           short int passwordLenght = askForPasswordLeght("How much do you want your password to be? (lenght > 7)", "Please, insert a number > 7", MINIMUM_PASSWORD_LENGHT);
           std::string webSiteOrAppName = askForWebSiteOrAppName("Which app or website is this password for?", "Please enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
           
+          exit = dbManager.isSomethingAlreadySavedWithSameName(tableName, webSiteOrAppName);
+          if(exit == NAME_ALREADY_EXISTING){
+            std::cout << "--------------------------" << std::endl;
+            std::cout << "A website/app password with the same name has already been saved." << std::endl;
+            std::cout << "--------------------------" << std::endl;
+          }
+          // TODO: TELLING THE USER WHAT TO DO IF NAME ALREADY EXISTS
           std::string firstSpecialCharactersPrompt = "The password normally includes: numbers, special characters and alphanumerical characters.";
           std::string secondSpecialCharactersPrompt = "If you want them all, insert 1.";
           std::string thirdSpecialCharactersPrompt = "If you prefer to choose which characters use and which not, insert 2.";
