@@ -3,6 +3,7 @@
 #include<cstring> 
 #include<vector>
 #include<cstdlib>
+#include<csignal>
 
 #include"timeManager/timeManager.h"
 #include"DBManager/DBManager.h"
@@ -50,12 +51,21 @@ std::string generatePassword(short int length, std::vector<bool> specialChararac
 char selectCharacterFromString(std::string stringToUse);
 void showGeneratedPassword(std::string stringToUse);
 
+void signalHandler(int signalNumber){
+
+  system("clear");
+  exit(1);
+
+}
+
 int main(void){
 
   int choice = 0;
   
   srand(time(NULL));
   
+  signal(SIGINT, signalHandler);
+
   TimeManager timeManager; // to get date when creating database records
   DBManager dbManager; // to get access to the database
   
@@ -239,7 +249,7 @@ int main(void){
         
         case MM_EXIT:
           system("clear");
-          return 1;
+          return 0;
     }
   }while(askForSomething("Do you want to do some other operation? (0/1)", "Please insert 0 or 1"));
   system("clear");
