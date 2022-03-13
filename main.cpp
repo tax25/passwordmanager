@@ -11,25 +11,31 @@
 #define MINIMUM_PASSWORD_LENGHT 7
 #define MINIMUM_WEBSITE_OR_APP_NAME 5
 #define NUMBER_OF_CHARACTER_ARRAY_CELLS 3
+#define MINIMUM_CHOICE 1
+#define MAXIMUM_CHOICE 5
 enum MainMenuChoices{
 
   MM_CREATE_PASSWORD = 1, 
   MM_SEARCH_PASSWORD = 2, 
-  MM_UPDATE_PASSWORD = 3
+  MM_UPDATE_PASSWORD = 3,
+  MM_JUST_PRINT_EVERY_PWD = 4,
+  MM_EXIT = 5
 
 };
 
 enum CreatePasswordChoices{
 
   CPC_DEFAULT_PASSWORD = 1, 
-  CPC_CUSTOM_PASSWORD = 2
+  CPC_CUSTOM_PASSWORD = 2,
+  CPC_EXIT = 3
 
 };
 
 enum SearchPwdChoices{
   
   SP_THROUGH_NAME = 1,
-  SP_THROUGH_DATE = 2
+  SP_THROUGH_DATE = 2,
+  SP_EXIT = 3
 
 };
 
@@ -70,7 +76,7 @@ int main(void){
     showChoices();
   
     //        std::cin fails
-    while(not(std::cin >> choice) || ((choice < MM_CREATE_PASSWORD)||(choice > MM_UPDATE_PASSWORD))){
+    while(not(std::cin >> choice) || ((choice < MINIMUM_CHOICE)||(choice > MAXIMUM_CHOICE))){
 
       std::cout << "Please insert a number between the possible choices" << std::endl;
       std::cin.clear();
@@ -100,7 +106,6 @@ int main(void){
               break;
             }
           } 
-          // TODO: TELLING THE USER WHAT TO DO IF NAME ALREADY EXISTS
 
           std::string firstSpecialCharactersPrompt = "The password normally includes: numbers, special characters and alphanumerical characters.";
           std::string secondSpecialCharactersPrompt = "If you want them all, insert 1.";
@@ -173,61 +178,71 @@ int main(void){
           }
   
         case MM_UPDATE_PASSWORD:
-          
-        std::string webSiteOrAppName = askForWebSiteOrAppName("Of which app/website would you like to change the password?", "Plese enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
-        std::string newPassword;
+          { 
+          std::string webSiteOrAppName = askForWebSiteOrAppName("Of which app/website would you like to change the password?", "Plese enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
+          std::string newPassword;
 
-        bool newPwdOrNot;
-        std::cout << "Do you want to type your new password or you want to create a new one? (0/1)" << std::endl;
-        while(not(std::cin >> newPwdOrNot)){
-          std::cout << "Please insert 0 or 1" << std::endl;
-        }
-        
-        if(newPwdOrNot){
-           
-          short int passwordLenght = askForPasswordLeght("How much do you want your password to be? (lenght > 7)", "Please, insert a number > 7", MINIMUM_PASSWORD_LENGHT);
-        
-          std::string firstSpecialCharactersPrompt = "The password normally includes: numbers, special characters and alphanumerical characters.";
-          std::string secondSpecialCharactersPrompt = "If you want them all, insert 1.";
-          std::string thirdSpecialCharactersPrompt = "If you prefer to choose which characters use and which not, insert 2.";
-        
-          // i use the first cell of the vector for numbers, the second for alphanumerical characters and the third for special ones. That's why in the function i use explicitely the first, second and third cell
-          std::vector <bool> specialCharacters = askForSpecialCharacters(firstSpecialCharactersPrompt, secondSpecialCharactersPrompt, thirdSpecialCharactersPrompt, NUMBER_OF_CHARACTER_ARRAY_CELLS);
-          
-          /*
-          for (bool booleanArrayElement : specialCharacters){
-            std::cout << "Boolean array element: "<< booleanArrayElement << std::endl;
+          bool newPwdOrNot;
+          std::cout << "Do you want to type your new password or you want to create a new one? (0/1)" << std::endl;
+          while(not(std::cin >> newPwdOrNot)){
+            std::cout << "Please insert 0 or 1" << std::endl;
           }
-          */
+        
+          if(newPwdOrNot){
+           
+            short int passwordLenght = askForPasswordLeght("How much do you want your password to be? (lenght > 7)", "Please, insert a number > 7", MINIMUM_PASSWORD_LENGHT);
+        
+            std::string firstSpecialCharactersPrompt = "The password normally includes: numbers, special characters and alphanumerical characters.";
+            std::string secondSpecialCharactersPrompt = "If you want them all, insert 1.";
+            std::string thirdSpecialCharactersPrompt = "If you prefer to choose which characters use and which not, insert 2.";
+        
+            // i use the first cell of the vector for numbers, the second for alphanumerical characters and the third for special ones. That's why in the function i use explicitely the first, second and third cell
+            std::vector <bool> specialCharacters = askForSpecialCharacters(firstSpecialCharactersPrompt, secondSpecialCharactersPrompt, thirdSpecialCharactersPrompt, NUMBER_OF_CHARACTER_ARRAY_CELLS);
+          
+            /*
+            for (bool booleanArrayElement : specialCharacters){
+              std::cout << "Boolean array element: "<< booleanArrayElement << std::endl;
+            }
+            */
 
-          newPassword = generatePassword(passwordLenght, specialCharacters);
-          showGeneratedPassword(newPassword);
+            newPassword = generatePassword(passwordLenght, specialCharacters);
+            showGeneratedPassword(newPassword);
   
           
-        }else{
-          std::cout << "Ok, insert the new password: " << std::endl;
-          std::cin >> newPassword;
-          std::cout << newPassword << std::endl;
-        }
+          }else{
+            std::cout << "Ok, insert the new password: " << std::endl;
+            std::cin >> newPassword;
+            std::cout << newPassword << std::endl;
+          }
 
-        // Create update statement
-        std::string sqlUpdateStatement = "UPDATE " 
-          + tableName +
-          + " SET PASSWORD = "
-          + dbManager.quoteSql(newPassword) 
-          + " WHERE WEBSITEORAPPNAME = "
-          + dbManager.quoteSql(webSiteOrAppName);
+          // Create update statement
+          std::string sqlUpdateStatement = "UPDATE " 
+            + tableName +
+            + " SET PASSWORD = "
+            + dbManager.quoteSql(newPassword) 
+            + " WHERE WEBSITEORAPPNAME = "
+            + dbManager.quoteSql(webSiteOrAppName);
        
-        bool exit = dbManager.updateSomethingInDB(sqlUpdateStatement);
-        if(exit != DB_SUCCESS){
-          std::cout << "An error occured while trying to update the password" << std::endl;
-        }else{
-          std::cout << "Password updated successfully" << std::endl;
-        }
-        break;
-  
+          bool exit = dbManager.updateSomethingInDB(sqlUpdateStatement);
+          if(exit != DB_SUCCESS){
+            std::cout << "An error occured while trying to update the password" << std::endl;
+          }else{
+            std::cout << "Password updated successfully" << std::endl;
+          }
+          break;
+          } // this is needed to avoid variables getting considered even in other case's scopes.
+
+        case MM_JUST_PRINT_EVERY_PWD:
+
+          dbManager.getEverythingFromTable(tableName);
+          break;
+        
+        case MM_EXIT:
+          system("clear");
+          return 1;
     }
   }while(askForSomething("Do you want to do some other operation? (0/1)", "Please insert 0 or 1"));
+  system("clear");
 }
 
 void welcomeUser(){
@@ -244,6 +259,8 @@ void showChoices(){
   std::cout << "(1) Create a new password" << std::endl;
   std::cout << "(2) Search for a saved password" << std::endl;
   std::cout << "(3) Change / Update a password" << std::endl;
+  std::cout << "(4) Print every password saved in the database" << std::endl;
+  std::cout << "(5) Exit" << std::endl;
 
 }
 
