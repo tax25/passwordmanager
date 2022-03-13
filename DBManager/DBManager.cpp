@@ -166,16 +166,15 @@ bool DBManager::isSomethingAlreadySavedWithSameName(std::string tableName, std::
   struct sqlite3_stmt *selectStatement;
     
   exit = sqlite3_prepare_v2(database, sqlSearchStatement.c_str(), -1, &selectStatement, NULL);
-  if(exit == SQLITE_OK){
-
-    if(sqlite3_step(selectStatement) == SQLITE_ROW){
-      return NAME_ALREADY_EXISTING;
-    }else{
-      return NAME_NOT_EXISTING;
-    }
-  }else{
+  if(exit != SQLITE_OK){
     std::cerr << "ERROR WHILE COMPILING SQL STATEMENT, ERROR CODE: " << exit  << std::endl;
   }
+
+  if(sqlite3_step(selectStatement) != SQLITE_ROW){
+    return NAME_NOT_EXISTING;
+  }
+
+  return NAME_ALREADY_EXISTING;
 }
 
 bool DBManager::insertIntoDB(std::string sqlInstruction){
