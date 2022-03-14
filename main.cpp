@@ -9,18 +9,23 @@
 #include"DBManager/DBManager.h"
 
 
-#define MINIMUM_PASSWORD_LENGHT 7
-#define MINIMUM_WEBSITE_OR_APP_NAME 5
-#define NUMBER_OF_CHARACTER_ARRAY_CELLS 3
-#define MINIMUM_CHOICE 1
-#define MAXIMUM_CHOICE 5
+#define EXIT 5
+enum CreatingPasswordConditions{
+
+  MINIMUM_CHOICE = 1,
+  NUMBER_OF_CHARACTER_ARRAY_CELLS = 3,
+  MINIMUM_WEBSITE_OR_APP_NAME = 5, 
+  MAXIMUM_CHOICE = 5,
+  MINIMUM_PASSWORD_LENGHT = 7
+
+};
+
 enum MainMenuChoices{
 
   MM_CREATE_PASSWORD = 1, 
   MM_SEARCH_PASSWORD = 2, 
   MM_UPDATE_PASSWORD = 3,
   MM_JUST_PRINT_EVERY_PWD = 4,
-  MM_EXIT = 5
 
 };
 
@@ -28,7 +33,6 @@ enum CreatePasswordChoices{
 
   CPC_DEFAULT_PASSWORD = 1, 
   CPC_CUSTOM_PASSWORD = 2,
-  CPC_EXIT = 3
 
 };
 
@@ -36,7 +40,6 @@ enum SearchPwdChoices{
   
   SP_THROUGH_NAME = 1,
   SP_THROUGH_DATE = 2,
-  SP_EXIT = 3
 
 };
 
@@ -134,12 +137,26 @@ int main(void){
             + dbManager.quoteSql(generatedPassword) + ");";
           
 //          std::cout << sqlInsertStatement << std::endl;
-          
-          exit = dbManager.insertIntoDB(sqlInsertStatement);
-          if(exit != DB_SUCCESS){
-            std::cout << "There was an error during password saving in db" << std::endl;
+          std::cout << "Do you want to save the password in the db? (0/1)" << std::endl;
+          bool savePassword; 
+          while(not(std::cin >> savePassword) || ((savePassword != false)&&(savePassword != true))){ 
+  
+            std::cout << "Please insert a number between the possible choices" << std::endl;
+            std::cin.clear();
+  
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          }
+          if(savePassword){
+
+            exit = dbManager.insertIntoDB(sqlInsertStatement);
+            if(exit != DB_SUCCESS){
+              std::cout << "There was an error during password saving in db" << std::endl;
+            }else{
+              std::cout << "The password has been successfully saved" << std::endl;
+            }
+
           }else{
-            std::cout << "The password has been successfully saved" << std::endl;
+            std::cout << "The password has not been saved" << std::endl;
           }
 
           break;
@@ -152,6 +169,7 @@ int main(void){
             std::cout << "By which method do you want to search the password?" << std::endl;
             std::cout << "(1) Through the name of the website / app" << std::endl;
             std::cout << "(2) Through creation date" << std::endl;
+            std::cout << "(5) Exit" << std::endl;
             
             while(not(std::cin >> mode) || ((mode < SP_THROUGH_NAME)&&(mode > SP_THROUGH_DATE))){
   
@@ -176,13 +194,16 @@ int main(void){
               
               bool exit = dbManager.querySomethingFromDB(sqlSearchStatement);
               if(exit != DB_SUCCESS){
-                std::cout << "Something went wrong" << std::endl;
+                std::cout << "Something went wrong while trying to get something from the database" << std::endl;
               }
   
             }else if(mode == SP_THROUGH_DATE){
               std::string dateOfCreation;
               std::cout << "Ok, Insert the date of the creation of the password (like this: dd-mm-yy)" << std::endl;
               std::cin >> dateOfCreation;
+            }else if(mode == EXIT){
+              system("clear");  
+              return 0;
             }
           break;
           }
@@ -222,23 +243,39 @@ int main(void){
           }else{
             std::cout << "Ok, insert the new password: " << std::endl;
             std::cin >> newPassword;
-            std::cout << newPassword << std::endl;
+            std::cout << "The password will be change to: " << newPassword << std::endl;
           }
+          
+          std::cout << "Do you want to update the password? (0/1)" << std::endl;
+          bool updatePassword; 
+          while(not(std::cin >> updatePassword) || ((updatePassword != false)&&(updatePassword != true))){ 
+  
+            std::cout << "Please insert a number between the possible choices" << std::endl;
+            std::cin.clear();
+  
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          }
+          if(updatePassword){
 
-          // Create update statement
-          std::string sqlUpdateStatement = "UPDATE " 
-            + tableName +
-            + " SET PASSWORD = "
-            + dbManager.quoteSql(newPassword) 
-            + " WHERE WEBSITEORAPPNAME = "
-            + dbManager.quoteSql(webSiteOrAppName);
+            // Create update statement
+            std::string sqlUpdateStatement = "UPDATE " 
+              + tableName +
+              + " SET PASSWORD = "
+              + dbManager.quoteSql(newPassword) 
+              + " WHERE WEBSITEORAPPNAME = "
+              + dbManager.quoteSql(webSiteOrAppName);
        
-          bool exit = dbManager.updateSomethingInDB(sqlUpdateStatement);
-          if(exit != DB_SUCCESS){
-            std::cout << "An error occured while trying to update the password" << std::endl;
-          }else{
-            std::cout << "Password updated successfully" << std::endl;
-          }
+            bool exit = dbManager.updateSomethingInDB(sqlUpdateStatement);
+            if(exit != DB_SUCCESS){
+              std::cout << "An error occured while trying to update the password" << std::endl;
+            }else{
+              std::cout << "Password updated successfully" << std::endl;
+            }
+
+            }else{
+              std::cout << "The password has not been saved" << std::endl;
+            }
+
           break;
           } // this is needed to avoid variables getting considered even in other case's scopes.
 
@@ -247,7 +284,7 @@ int main(void){
           dbManager.getEverythingFromTable(tableName);
           break;
         
-        case MM_EXIT:
+        case EXIT:
           system("clear");
           return 0;
     }
