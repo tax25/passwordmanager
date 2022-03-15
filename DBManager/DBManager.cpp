@@ -6,7 +6,7 @@ bool DBManager::generalMethodToDoSomethingToDB(bool query, std::string sqlInstru
   sqlite3 *database;
   int exit = 0;
 
-  exit = sqlite3_open(dbName.c_str(), &database);
+  exit = sqlite3_open(databasePath.c_str(), &database);
 
   if(exit != SQLITE_OK){
     std::cout << openingDBError << std::endl;
@@ -38,7 +38,6 @@ void DBManager::setDBName(std::string databaseName){
   dbName = databaseName;
 }
 
-
 int DBManager::callback(void *data, int argc, char** argv, char** azColName){
 
   // fprintf(stderr, "%s: ", (const char*)data);
@@ -64,6 +63,30 @@ bool DBManager::createDatabase(){
   int exit = 0;
 
   exit = sqlite3_open(dbName.c_str(), &database);
+
+  if(exit != SQLITE_OK){
+    return DB_FAIL;
+  }
+  sqlite3_close(database);
+  
+  return DB_SUCCESS;
+
+}
+
+
+bool DBManager::createDatabase(std::string directoryToCreateDBIn, std::string nameOfFolderToPutDBIn){
+
+  sqlite3 *database;
+  int exit = 0;
+  std::string commandToCreateDir = "mkdir" + (std::string)" " + (std::string)directoryToCreateDBIn + (std::string) "/"  + (std::string)nameOfFolderToPutDBIn; 
+  const int creatingDirError = system(commandToCreateDir.c_str());
+  if(creatingDirError == -1){
+    std::cerr << "error creating directory" << std::endl;
+  }
+
+  std::string dbPath = directoryToCreateDBIn + "/" + nameOfFolderToPutDBIn + "/" + dbName;
+  databasePath = dbPath; // setting the private variable to the path here created so that i can use this var instead of re-writing everything always
+  exit = sqlite3_open(databasePath.c_str(), &database);
 
   if(exit != SQLITE_OK){
     return DB_FAIL;
@@ -134,7 +157,7 @@ bool DBManager::createTable(std::string tableName, std::vector<std::string> colu
   
   int exit = 0;
   char *errorMessage;
-  exit = sqlite3_open(dbName.c_str(), &database);
+  exit = sqlite3_open(databasePath.c_str(), &database);
   exit = sqlite3_exec(database, sqlCreateTableStatement.c_str(), NULL, 0, &errorMessage);
   if(exit != SQLITE_OK){
     std::cout << errorMessage << std::endl;
@@ -158,7 +181,7 @@ bool DBManager::isSomethingAlreadySavedWithSameName(std::string tableName, std::
   
   int exit = 0;
   char* errorMessage;
-  exit = sqlite3_open(dbName.c_str(), &database);
+  exit = sqlite3_open(databasePath.c_str(), &database);
   if(exit != SQLITE_OK){
     std::cout << openingDBError << std::endl;
     sqlite3_free(errorMessage);
@@ -173,7 +196,7 @@ bool DBManager::isSomethingAlreadySavedWithSameName(std::string tableName, std::
   if(sqlite3_step(selectStatement) != SQLITE_ROW){
     return NAME_NOT_EXISTING;
   }
-
+  sqlite3_finalize(selectStatement);
   return NAME_ALREADY_EXISTING;
 }
 
@@ -204,7 +227,7 @@ void DBManager::getEverythingFromTable(std::string tableName){
   std::string sqlQueryStatement = "SELECT * FROM " + tableName;
   
   int exit = 0;
-  exit = sqlite3_open(dbName.c_str(), &database);
+  exit = sqlite3_open(databasePath.c_str(), &database);
   if(exit != SQLITE_OK){
     std::cout << openingDBError << std::endl;
     sqlite3_free(errorMessage);

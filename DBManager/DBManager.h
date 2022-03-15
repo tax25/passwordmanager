@@ -24,20 +24,26 @@ class DBManager{
 
 private:
   std::string dbName;
-
+  
+  std::string databasePath;
+  
   static int callback(void *data, int argc, char** argv, char** azColName);
   
   const std::string openingDBError = "An error occured while trying to open the database";
   
   bool generalMethodToDoSomethingToDB(bool query, std::string sqlInstruction, std::string specificErrorPromptIfOperationFails);
   std::string privateQuoteSql(std::string stringToQuote_2); 
+
 public:
+
   void setDBName(std::string databaseName);
 
   std::string quoteSql(std::string stringToQuote);
   
   bool createDatabase();
   
+  bool createDatabase(std::string directoryToCreateDBIn, std::string nameOfFolderToPutDBIn);
+
   bool insertSomething();
   
   bool createTable(std::string tableName, std::vector<std::string> columnsNameAndType);
