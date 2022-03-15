@@ -81,7 +81,7 @@ int main(void){
   
   std::string tableName = "PASSWORDSTABLE";
   
-  dbManager.setDBName("pincoPalloDB.db");
+  dbManager.setDBName("passwordsDB.db");
   dbManager.createDatabase(getenv("HOME"), "passwordmanager"); // I want to create the db in the home directory (actually in a folder in the home directory, but let's keep things simple now)
   
   std::vector<std::string> columnsNameAndType = {"DATEOFRECORD DATE", "WEBSITEORAPPNAME TEXT", "PASSWORD TEXT"};
