@@ -10,3 +10,4 @@ TODOs for the project:
 - [] Find a way to write something when no results are found in search of password (2nd option of main menu) (and even in the 3rd option, since
     if the user types a non existent password, it wont be found and the program probably crashes)
 - [] Control if a password exists when in update part, so that the program won't crash when committing the update command
+- [] Create documentation for DBManager and TimeManager
