@@ -9,7 +9,6 @@
 #include"DBManager/DBManager.h"
 
 
-#define EXIT 5
 enum CreatingPasswordConditions{
 
   MINIMUM_CHOICE = 1,
@@ -26,7 +25,7 @@ enum MainMenuChoices{
   MM_SEARCH_PASSWORD = 2, 
   MM_UPDATE_PASSWORD = 3,
   MM_JUST_PRINT_EVERY_PWD = 4,
-
+  MM_EXIT = 5
 };
 
 enum CreatePasswordChoices{
@@ -40,6 +39,14 @@ enum SearchPwdChoices{
   
   SP_THROUGH_NAME = 1,
   SP_THROUGH_DATE = 2,
+  SP_EXIT = 3
+
+};
+
+enum UpdatePwdOptions{
+
+  UPWD_OPT_NO = 0, 
+  UPWD_OPT_YES = 1
 
 };
 
@@ -169,15 +176,17 @@ int main(void){
             std::cout << "By which method do you want to search the password?" << std::endl;
             std::cout << "(1) Through the name of the website / app" << std::endl;
             std::cout << "(2) Through creation date" << std::endl;
-            std::cout << "(5) Exit" << std::endl;
+            std::cout << "(3) Exit" << std::endl;
             
-            while(not(std::cin >> mode) || ((mode < SP_THROUGH_NAME)&&(mode > SP_THROUGH_DATE))){
+            while(not(std::cin >> mode) || ((mode < SP_THROUGH_NAME) || (mode > SP_EXIT))) {
   
               std::cout << "Please insert a number between the possible choices" << std::endl;
               std::cin.clear();
   
               std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
             }
+            
             if(mode == SP_THROUGH_NAME){
                
               std::string webOrAppNameToSearch;
@@ -199,9 +208,21 @@ int main(void){
   
             }else if(mode == SP_THROUGH_DATE){
               std::string dateOfCreation;
-              std::cout << "Ok, Insert the date of the creation of the password (like this: dd-mm-yy)" << std::endl;
+              std::cout << "Ok, Insert the date of the creation of the password (like this: dd-mm-yyyy) [if the n of the month is a single digit (like march which is 3), insert dd-m-yyyy]" << std::endl;
               std::cin >> dateOfCreation;
-            }else if(mode == EXIT){
+
+              std::string sqlSearchStatement = "SELECT * FROM " 
+                + tableName 
+                + " WHERE "
+                + /*column name, i'm gonna put the name of the webOrAppNameToSearch, so: */ "DATEOFRECORD = " 
+                + dbManager.quoteSql(dateOfCreation);
+              
+              bool exit = dbManager.querySomethingFromDB(sqlSearchStatement);
+              if(exit != DB_SUCCESS){
+                std::cout << "Error. An error occured while trying to fetch data from the database." << std::endl;
+              }
+
+            }else if(mode == SP_EXIT){
               system("clear");  
               return 0;
             }
@@ -213,9 +234,9 @@ int main(void){
           std::string webSiteOrAppName = askForWebSiteOrAppName("Of which app/website would you like to change the password?", "Plese enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
           std::string newPassword;
 
-          bool newPwdOrNot;
+          short int newPwdOrNot;
           std::cout << "Do you want to type your new password or you want to create a new one? (0/1)" << std::endl;
-          while(not(std::cin >> newPwdOrNot)){
+          while(not(std::cin >> newPwdOrNot) || ((newPwdOrNot < UPWD_OPT_NO) || (newPwdOrNot > UPWD_OPT_YES))){
             std::cout << "Please insert 0 or 1" << std::endl;
           }
         
@@ -284,7 +305,7 @@ int main(void){
           dbManager.getEverythingFromTable(tableName);
           break;
         
-        case EXIT:
+        case MM_EXIT:
           system("clear");
           return 0;
     }
