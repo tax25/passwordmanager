@@ -169,14 +169,14 @@ bool DBManager::createTable(std::string tableName, std::vector<std::string> colu
   return DB_SUCCESS;
 }
 
-bool DBManager::isSomethingAlreadySavedWithSameName(std::string tableName, std::string name){
+bool DBManager::isRecordInDB(std::string tableName, std::string databaseColumn, std::string columnValue){
   
   std::string sqlSearchStatement = "SELECT * FROM " 
     + tableName 
     + " WHERE "
-    + /*column name, i'm gonna put the name of the webOrAppNameToSearch, so: */ "WEBSITEORAPPNAME = "
-    + privateQuoteSql(name);  
-
+    + databaseColumn + " = "
+    + privateQuoteSql(columnValue);  
+  
   sqlite3 *database;
   
   int exit = 0;
@@ -191,12 +191,16 @@ bool DBManager::isSomethingAlreadySavedWithSameName(std::string tableName, std::
   exit = sqlite3_prepare_v2(database, sqlSearchStatement.c_str(), -1, &selectStatement, NULL);
   if(exit != SQLITE_OK){
     std::cerr << "ERROR WHILE COMPILING SQL STATEMENT, ERROR CODE: " << exit  << std::endl;
+    std::cout << sqlite3_errmsg(database) << std::endl;
   }
-
+  
   if(sqlite3_step(selectStatement) != SQLITE_ROW){
+    sqlite3_finalize(selectStatement);
+    sqlite3_close(database);
     return NAME_NOT_EXISTING;
   }
   sqlite3_finalize(selectStatement);
+  sqlite3_close(database);
   return NAME_ALREADY_EXISTING;
 }
 

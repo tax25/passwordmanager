@@ -48,7 +48,7 @@ public:
   
   bool createTable(std::string tableName, std::vector<std::string> columnsNameAndType);
 
-  bool isSomethingAlreadySavedWithSameName(std::string tableName, std::string name); // method strictly related to this project  
+  bool isRecordInDB(std::string tableName, std::string databaseColumn, std::string columnValue); // method strictly related to this project  
   // std::string createQueryStatement(std::string tableName, std::string parameter, std::string condition);
   
   // std::string createUpdateStatement(std::string tableName, std::string parameter, std::string condition);
