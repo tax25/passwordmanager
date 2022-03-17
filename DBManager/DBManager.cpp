@@ -197,11 +197,18 @@ bool DBManager::isRecordInDB(std::string tableName, std::string databaseColumn, 
   if(sqlite3_step(selectStatement) != SQLITE_ROW){
     sqlite3_finalize(selectStatement);
     sqlite3_close(database);
-    return NAME_NOT_EXISTING;
+    return RECORD_NOT_EXISTING;
   }
   sqlite3_finalize(selectStatement);
   sqlite3_close(database);
-  return NAME_ALREADY_EXISTING;
+  return RECORD_ALREADY_EXISTING;
+}
+
+bool DBManager::doesNameAlreadyExist(std::string tableName, std::string nameToSearch){
+
+
+
+  return true;
 }
 
 bool DBManager::insertIntoDB(std::string sqlInstruction){

@@ -12,4 +12,7 @@ TODOs for the project:
 - [x] Control if a password exists when in update part, so that the program won't crash when committing the update command
 
 - [] Create documentation for DBManager and TimeManager
-- [] Review Search pwd code and the Update code part
+- [x] Review Search pwd code and the Update code part
+- [] Find a way to show results even if the value searched is not the same (like if I search "example.com", but i saved "example" it will show anyways. As the code is written now, it wouldn't show)
+- [] Update all sql-code-running methods to sqlite3_prepare_v2 - sqlite3_step() - sqlite3)_finalize() workflow.
+- [] Develop doesNameAlreadyExist(...)

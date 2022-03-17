@@ -12,13 +12,19 @@ enum DBState{
 
 };
 
-enum DBSearchState{
+enum DBDoesRecordExist{
+
+  RECORD_ALREADY_EXISTING = true,
+  RECORD_NOT_EXISTING = false
+
+};
+
+enum DBDoesNameAlreadyExist{
 
   NAME_ALREADY_EXISTING = true,
   NAME_NOT_EXISTING = false
 
 };
-
 
 class DBManager{
 
@@ -32,6 +38,7 @@ private:
   const std::string openingDBError = "An error occured while trying to open the database";
   
   bool generalMethodToDoSomethingToDB(bool query, std::string sqlInstruction, std::string specificErrorPromptIfOperationFails);
+ 
   std::string privateQuoteSql(std::string stringToQuote_2); 
 
 public:
@@ -44,12 +51,13 @@ public:
   
   bool createDatabase(std::string directoryToCreateDBIn, std::string nameOfFolderToPutDBIn);
 
-  bool insertSomething();
+  // bool insertSomething(); /*Debug method*/
   
   bool createTable(std::string tableName, std::vector<std::string> columnsNameAndType);
 
   bool isRecordInDB(std::string tableName, std::string databaseColumn, std::string columnValue); // method strictly related to this project  
   // std::string createQueryStatement(std::string tableName, std::string parameter, std::string condition);
+  bool doesNameAlreadyExist(std::string tableName, std::string nameToSearch); 
   
   // std::string createUpdateStatement(std::string tableName, std::string parameter, std::string condition);
   

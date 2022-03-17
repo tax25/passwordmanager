@@ -116,7 +116,7 @@ int main(void){
           std::string webSiteOrAppName;
           while(not(nameInsertedCorrectly)){
             webSiteOrAppName = askForWebSiteOrAppName("Which app or website is this password for?", "Please enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
-            exit = dbManager.isRecordInDB(tableName, "WEBSITEORAPPNAME ", webSiteOrAppName);
+            exit = dbManager.doesNameAlreadyExist(tableName, webSiteOrAppName);
             if(exit == NAME_ALREADY_EXISTING){
               std::cout << "--------------------------" << std::endl;
               std::cout << "A website/app password with the same name has already been saved: please insert a different name" << std::endl;
@@ -192,10 +192,12 @@ int main(void){
               std::string webOrAppNameToSearch;
               std::cout << "Ok, Insert the name of the app or website: " << std::endl;
               std::cin >> webOrAppNameToSearch;
-
+              
+              // since the code written here is really similar to the code written in the following case (search through date), could i create a function 
+              // that takes in the parameters that differ in the 2 parts? 
 
               bool exit = dbManager.isRecordInDB(tableName, "WEBSITEORAPPNAME", webOrAppNameToSearch);
-              if(exit != NAME_NOT_EXISTING){
+              if(exit != RECORD_NOT_EXISTING){
 
                 std::string sqlSearchStatement = "SELECT * FROM "
                   + tableName
@@ -218,7 +220,7 @@ int main(void){
 
 
               bool exit = dbManager.isRecordInDB(tableName, "DATEOFRECORD ", dateOfCreation);
-              if(exit != NAME_NOT_EXISTING){
+              if(exit != RECORD_NOT_EXISTING){
 
                 std::string sqlSearchStatement = "SELECT * FROM "
                   + tableName
@@ -247,11 +249,11 @@ int main(void){
           {
           std::string webSiteOrAppName;
           std::string newPassword;
-          // check if password exists
-
+          
           bool nameInsertedCorrectly = false;
           while(not(nameInsertedCorrectly)){
             webSiteOrAppName = askForWebSiteOrAppName("Of which app/website would you like to change the password?", "Please enter a valid name", MINIMUM_WEBSITE_OR_APP_NAME);
+            // check if record exists
             bool exit = dbManager.isRecordInDB(tableName, "WEBSITEORAPPNAME ", webSiteOrAppName);
             if(exit == NAME_NOT_EXISTING){
               std::cout << "No result was found for your research, please enter a different name" << std::endl; 
