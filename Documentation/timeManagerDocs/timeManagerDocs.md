@@ -19,7 +19,7 @@ It gets the date from the system date, i'm not using an ntp server.
 It assigns the struct values of time to 3 variables (dayOfMonth, month, year).
   
 ```c++
-  
+ 
   dayOfMonth = local -> tm_mday;
   month = local -> tm_mon + 1;
   year = local -> tm_year + 1900;
