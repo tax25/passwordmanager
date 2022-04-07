@@ -117,6 +117,7 @@ int main(void){
           while(not(nameInsertedCorrectly)){
             webSiteOrAppName = askForWebSiteOrAppName("Which app or website is this password for?", "Please enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
             exit = dbManager.doesNameAlreadyExist(tableName, webSiteOrAppName);
+          std::cout << "exit value: "<< exit << std::endl; // is 1
             if(exit == NAME_ALREADY_EXISTING){
               std::cout << "--------------------------" << std::endl;
               std::cout << "A website/app password with the same name has already been saved: please insert a different name" << std::endl;

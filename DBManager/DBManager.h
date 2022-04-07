@@ -38,7 +38,9 @@ private:
   const std::string openingDBError = "An error occured while trying to open the database";
   
   bool generalMethodToDoSomethingToDB(bool query, std::string sqlInstruction, std::string specificErrorPromptIfOperationFails);
- 
+  
+  bool checkIfAlreadySaved(std::string tableName, std::string databaseColumn, std::string columnValue); // quite related to this project and to the type of table the db has
+
   std::string privateQuoteSql(std::string stringToQuote_2); 
 
 public:

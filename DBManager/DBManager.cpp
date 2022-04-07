@@ -30,6 +30,43 @@ bool DBManager::generalMethodToDoSomethingToDB(bool query, std::string sqlInstru
   return DB_SUCCESS;
 }
 
+bool DBManager::checkIfAlreadySaved(std::string tableName, std::string databaseColumn, std::string columnValue){
+
+  std::string sqlSearchStatement = "SELECT * FROM " 
+    + tableName 
+    + " WHERE "
+    + databaseColumn + " = "
+    + privateQuoteSql(columnValue);  
+  
+  sqlite3 *database;
+  
+  int exit = 0;
+  char* errorMessage;
+  exit = sqlite3_open(databasePath.c_str(), &database);
+  if(exit != SQLITE_OK){
+    std::cout << openingDBError << std::endl;
+    sqlite3_free(errorMessage);
+  }
+  struct sqlite3_stmt *selectStatement;
+    
+  exit = sqlite3_prepare_v2(database, sqlSearchStatement.c_str(), -1, &selectStatement, NULL);
+  if(exit != SQLITE_OK){
+    std::cerr << "ERROR WHILE COMPILING SQL STATEMENT, ERROR CODE: " << exit  << std::endl;
+    std::cout << sqlite3_errmsg(database) << std::endl;
+  }
+  
+  if(sqlite3_step(selectStatement) != SQLITE_ROW){
+    sqlite3_finalize(selectStatement);
+    sqlite3_close(database);
+    return RECORD_NOT_EXISTING;
+  }
+  sqlite3_finalize(selectStatement);
+  sqlite3_close(database);
+  return RECORD_ALREADY_EXISTING;
+
+
+}
+
 std::string DBManager::privateQuoteSql(std::string stringToQuote_2){
   return std::string("'") + stringToQuote_2 + std::string("'");
 }
@@ -171,44 +208,17 @@ bool DBManager::createTable(std::string tableName, std::vector<std::string> colu
 
 bool DBManager::isRecordInDB(std::string tableName, std::string databaseColumn, std::string columnValue){
   
-  std::string sqlSearchStatement = "SELECT * FROM " 
-    + tableName 
-    + " WHERE "
-    + databaseColumn + " = "
-    + privateQuoteSql(columnValue);  
-  
-  sqlite3 *database;
-  
-  int exit = 0;
-  char* errorMessage;
-  exit = sqlite3_open(databasePath.c_str(), &database);
-  if(exit != SQLITE_OK){
-    std::cout << openingDBError << std::endl;
-    sqlite3_free(errorMessage);
-  }
-  struct sqlite3_stmt *selectStatement;
-    
-  exit = sqlite3_prepare_v2(database, sqlSearchStatement.c_str(), -1, &selectStatement, NULL);
-  if(exit != SQLITE_OK){
-    std::cerr << "ERROR WHILE COMPILING SQL STATEMENT, ERROR CODE: " << exit  << std::endl;
-    std::cout << sqlite3_errmsg(database) << std::endl;
-  }
-  
-  if(sqlite3_step(selectStatement) != SQLITE_ROW){
-    sqlite3_finalize(selectStatement);
-    sqlite3_close(database);
-    return RECORD_NOT_EXISTING;
-  }
-  sqlite3_finalize(selectStatement);
-  sqlite3_close(database);
-  return RECORD_ALREADY_EXISTING;
+  return checkIfAlreadySaved(tableName, databaseColumn, columnValue);
+
 }
 
 bool DBManager::doesNameAlreadyExist(std::string tableName, std::string nameToSearch){
 
+  if(checkIfAlreadySaved(tableName, "WEBSITEORAPPNAME", nameToSearch) == RECORD_ALREADY_EXISTING){
+    return NAME_ALREADY_EXISTING; 
+  }
+  return NAME_NOT_EXISTING;
 
-
-  return true;
 }
 
 bool DBManager::insertIntoDB(std::string sqlInstruction){

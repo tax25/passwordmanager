@@ -14,5 +14,4 @@ TODOs for the project:
 - [] Create documentation for DBManager and TimeManager
 - [x] Review Search pwd code and the Update code part
 - [] Find a way to show results even if the value searched is not the same (like if I search "example.com", but i saved "example" it will show anyways. As the code is written now, it wouldn't show)
-- [] Update all sql-code-running methods to sqlite3_prepare_v2 - sqlite3_step() - sqlite3)_finalize() workflow.
-- [] Develop doesNameAlreadyExist(...)
+- [x] Develop doesNameAlreadyExist(...)
