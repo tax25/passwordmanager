@@ -116,3 +116,4 @@ Creating the SQL statement looping through the vector.
 ```
 
 Then it opens a connection with the db, executes the statement and returns true (DB\_SUCCESS) or false (DB\_FAIL) wether the operation was successful or not. 
+
