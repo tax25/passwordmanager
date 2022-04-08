@@ -11,4 +11,4 @@ install:
 
 clean:
 	sudo rm -r /usr/local/bin/newPasswordManager
-	sudo rm -r /usr/local/bin/passwordsDB.db
+	sudo rm -r $${HOME}/passwordmanagerUtils/passwordsDB.db

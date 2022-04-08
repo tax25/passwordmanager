@@ -82,7 +82,7 @@ int main(void){
   std::string tableName = "PASSWORDSTABLE";
 
   dbManager.setDBName("passwordsDB.db");
-  dbManager.createDatabase(getenv("HOME"), "passwordmanager"); // I want to create the db in the home directory (actually in a folder in the home directory, but let's keep things simple now)
+  dbManager.createDatabase(getenv("HOME"), "passwordmanagerUtils"); // I want to create the db in the home directory (actually in a folder in the home directory, but let's keep things simple now)
 
   std::vector<std::string> columnsNameAndType = {"DATEOFRECORD DATE", "WEBSITEORAPPNAME TEXT", "PASSWORD TEXT"};
   dbManager.createTable(tableName, columnsNameAndType);
@@ -117,7 +117,6 @@ int main(void){
           while(not(nameInsertedCorrectly)){
             webSiteOrAppName = askForWebSiteOrAppName("Which app or website is this password for?", "Please enter a valid name ( > 5)", MINIMUM_WEBSITE_OR_APP_NAME);
             exit = dbManager.doesNameAlreadyExist(tableName, webSiteOrAppName);
-          std::cout << "exit value: "<< exit << std::endl; // is 1
             if(exit == NAME_ALREADY_EXISTING){
               std::cout << "--------------------------" << std::endl;
               std::cout << "A website/app password with the same name has already been saved: please insert a different name" << std::endl;
