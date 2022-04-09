@@ -116,3 +116,79 @@ Creating the SQL statement looping through the vector.
 ```
 
 Then it opens a connection with the db, executes the statement and returns true (DB\_SUCCESS) or false (DB\_FAIL) wether the operation was successful or not. 
+
+### bool insertIntoDB(std::string sqlInstruction)
+
+```c++
+
+	bool insertIntoDB(std::string sqlInstruction);
+
+```
+
+#### What it does
+
+insertIntoDB deals with committing and saving information to the db. It takes in input the SQL statement that has to be executed. 
+It returns true (DB\_SUCCESS) or false (DB\_FAIL) wether the operation was successful or not.
+The statement execution isn't done in insertIntoDB. In fact, as you can notice the method just points to another (private) method: generalMethodToDoSomethingToDB. 
+
+```c++ 
+
+  return generalMethodToDoSomethingToDB(false, sqlInstruction, 
+  "An error occured while trying to insert data into the database");
+
+```
+
+### bool querySomethingFromDB(std::string sqlInstruction)
+
+```c++
+
+  bool querySomethingFromDB(std::string sqlInstruction);
+
+```
+
+#### What it does
+
+querySomethingFromDB deals with getting information from the db. 
+It returns true or false wether the operation was successful or not. 
+
+As you can notice, this method refers to the same private method as insertIntoDB. Through a control variable (query) the method is able to understand if the SQL statement to execute is a query or not. If it is it will go through a slightly different set of instructions. 
+
+For printing the results of the query, it doesn't have to return a string or an array, as the callback method (which is private) deals already with it. I'm not sure if this workflow is correct, but for now it works so I will keep it. 
+
+### bool updateSomethingInDB(std::string sqlInstruction)
+
+```c++
+
+  bool updateSomethingInDB(std::string sqlInstruction);
+
+```
+
+#### What it does
+
+updateSomethingInDB deals with updating a specific record in the database. It executes the SQL statement through the same method that insertIntoDB and querySomethingFromDB use. 
+It returns true or false wether the operation was successful or not. 
+
+### void getEveryThingFromTable(std::string tableName)
+
+```c++
+
+  void getEveryThingFromTable(std::string tableName);
+
+```
+
+#### What it does
+
+getEverythingFromTable does exactly what it does. It prints everything that is saved in a specific table that is chosen through the *tableName* parameter.
+
+### bool deleteTable(std::string tableName)
+
+```c++
+
+  void deleteTable(std::string tableName)
+
+```
+
+#### What it does
+
+It deals with dropping a specific table, that is chosen via the *tableName* parameter.
+It returns true or false wether the operation was successful or not. 
