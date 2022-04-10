@@ -1,6 +1,6 @@
 # DBManager Documentation
 
-## Methods
+## Public Methods
 
 DBManager has different methods to do different things. Here are all the public methods.
 
@@ -121,7 +121,7 @@ Then it opens a connection with the db, executes the statement and returns true 
 
 ```c++
 
-	bool insertIntoDB(std::string sqlInstruction);
+  bool insertIntoDB(std::string sqlInstruction);
 
 ```
 
@@ -191,4 +191,87 @@ getEverythingFromTable does exactly what it does. It prints everything that is s
 #### What it does
 
 It deals with dropping a specific table, that is chosen via the *tableName* parameter.
-It returns true or false wether the operation was successful or not. 
+It returns true or false wether the operation was successful or not.
+
+## Private Methods
+
+The private methods are, of course, private and shall not be used. Here is an explanation on how they work in case you are curious.
+
+### static int callback(void \*data, int argc, char\** argv, char** azColName)
+
+This is a method that is basically mandatory to work with sqlite3. It is called every time that we try to read something from the database. I use it to print to screen the results of the query. 
+
+It is only a for loop that loops through an array with all the results of the query, in this case I cannot explain really how this function works since I didn't write it.
+
+```c++
+ 
+  for (int i = 0; i < argc; i++) {
+    printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+  }
+
+```
+
+### bool generalMethodToDoSomethingToDB(bool query, std::string sqlInstruction, std::string specificErrorPromptIfOperationFails)
+
+This is a multi-purpose method. It is used in 3 public methods (insertIntoDB, querySomethingFromDB and updateSomethingInDB).   
+Its main job is to compile the SQL statement given through the parameter, *sqlInstruction*, and return wether the operation was successful or not. 
+
+It opens the connection with the database:
+
+```c++
+
+  sqlite3 *database;
+  int exit = 0;
+
+  exit = sqlite3_open(databasePath.c_str(), &database);
+
+  if(exit != SQLITE_OK){
+    std::cout << openingDBError << std::endl;
+    return DB_FAIL;
+  }
+
+```
+If the database can't be opened, it returns false (DB_FAIL) and prints the error.
+
+Then it checks if the statement to compile and run is a query or not, and executes the statement:
+
+```c++
+
+  char *errorMessage;
+  if(query){
+    exit = sqlite3_exec(database, sqlInstruction.c_str(), callback, NULL, &errorMessage);
+  }else{
+    exit = sqlite3_exec(database, sqlInstruction.c_str(), NULL, 0, &errorMessage);
+  }
+
+```
+
+Finally it checks if the operation was successful or not:
+
+```c++
+
+  if(exit != SQLITE_OK){
+    std::cout << specificErrorPromptIfOperationFails << std::endl;
+    std::cout << errorMessage << std::endl;
+    return DB_FAIL;
+  }
+  sqlite3_close(database);
+  
+  return DB_SUCCESS;
+
+```
+
+### std::string privateQuoteSql(std::string stringToQuote_2)
+
+This is the same method as the public one "quoteSql". Simply i didn't know how to call a public method inside another so i created this one. I don't think it is the best solution, but i couldn't find another one on the internet (stackOverflow didn't come in help :[).
+
+```c++
+
+  std::string DBManager::privateQuoteSql(std::string stringToQuote_2){
+  	return std::string("'") + stringToQuote_2 + std::string("'");
+  }
+
+```
+
+
+*The method "checkIfAlreadySaved" has not been explained as it is strictly related to the project and to the type of table you have. If interested tell me and I will write it here*
