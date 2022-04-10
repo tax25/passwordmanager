@@ -3,6 +3,8 @@ TODOs for the project:
 
 - [] Create documentation for DBManager and TimeManager
 - [] Find a way to show results even if the value searched is not the same (like if I search "example.com", but i saved "example" it will show anyways. As the code is written now, it wouldn't show)
+- [] Develope encryption for saving passwords. Saving passwords as plain text might not be the best idea.
+- [] Develope a second way to create passwords (like it would be cool to create password in the style apple does [abcd...-,,,,-,,,,])
 
 DONE:
 
