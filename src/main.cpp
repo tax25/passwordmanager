@@ -177,7 +177,7 @@ int main(void){
             std::cout << "(1) Through the name of the website / app" << std::endl;
             std::cout << "(2) Through creation date" << std::endl;
             std::cout << "(3) Exit" << std::endl;
-
+            
             while(not(std::cin >> mode) || ((mode < SP_THROUGH_NAME) || (mode > SP_EXIT))) {
 
               std::cout << "Please insert a number between the possible choices" << std::endl;
@@ -192,25 +192,38 @@ int main(void){
               std::string webOrAppNameToSearch;
               std::cout << "Ok, Insert the name of the app or website: " << std::endl;
               std::cin >> webOrAppNameToSearch;
-              
-              // since the code written here is really similar to the code written in the following case (search through date), could i create a function 
-              // that takes in the parameters that differ in the 2 parts? 
 
-              bool exit = dbManager.isRecordInDB(tableName, "WEBSITEORAPPNAME", webOrAppNameToSearch);
-              if(exit != RECORD_NOT_EXISTING){
+              bool exit = dbManager.isRecordInDB(false, tableName, "WEBSITEORAPPNAME", webOrAppNameToSearch);
+              if(exit == RECORD_ALREADY_EXISTING){
 
                 std::string sqlSearchStatement = "SELECT * FROM "
                   + tableName
                   + " WHERE "
                   + "WEBSITEORAPPNAME = "
-                  + dbManager.quoteSql(webOrAppNameToSearch);
-
+                  + dbManager.quoteSql(dbManager.returnStringWithPercentage(webOrAppNameToSearch));
+                
                 exit = dbManager.querySomethingFromDB(sqlSearchStatement);
                 if(exit != DB_SUCCESS){
                   std::cout << "Something went wrong while trying to get something from the database" << std::endl;
                 }
+              
               }else{
-                std::cout << "No results were found for your research" << std::endl;
+              
+                exit = dbManager.isRecordInDB(true, tableName, "WEBSITEORAPPNAME", webOrAppNameToSearch);
+                if(exit == RECORD_ALREADY_EXISTING){
+                  std::cout << "\nNo results were found for " << dbManager.quoteSql(webOrAppNameToSearch) << " but I found something similar: " << "\n" << std::endl;
+
+                  std::string sqlSearchStatement = "SELECT * FROM "
+                    + tableName
+                    + " WHERE "
+                    + "WEBSITEORAPPNAME LIKE "
+                    + dbManager.quoteSql(dbManager.returnStringWithPercentage(webOrAppNameToSearch));
+                
+                  exit = dbManager.querySomethingFromDB(sqlSearchStatement);
+                  if(exit != DB_SUCCESS){
+                    std::cout << "Something went wrong while trying to get something from the database" << std::endl;
+                  }
+                }
               }
 
             }else if(mode == SP_THROUGH_DATE){
@@ -219,7 +232,7 @@ int main(void){
               std::cin >> dateOfCreation;
 
 
-              bool exit = dbManager.isRecordInDB(tableName, "DATEOFRECORD ", dateOfCreation);
+              bool exit = dbManager.isRecordInDB(false, tableName, "DATEOFRECORD ", dateOfCreation);
               if(exit != RECORD_NOT_EXISTING){
 
                 std::string sqlSearchStatement = "SELECT * FROM "
@@ -254,7 +267,7 @@ int main(void){
           while(not(nameInsertedCorrectly)){
             webSiteOrAppName = askForWebSiteOrAppName("Of which app/website would you like to change the password?", "Please enter a valid name", MINIMUM_WEBSITE_OR_APP_NAME);
             // check if record exists
-            bool exit = dbManager.isRecordInDB(tableName, "WEBSITEORAPPNAME ", webSiteOrAppName);
+            bool exit = dbManager.isRecordInDB(false, tableName, "WEBSITEORAPPNAME ", webSiteOrAppName);
             if(exit == NAME_NOT_EXISTING){
               std::cout << "No result was found for your research, please enter a different name" << std::endl; 
             }else{

@@ -39,7 +39,7 @@ private:
   
   bool generalMethodToDoSomethingToDB(bool query, std::string sqlInstruction, std::string specificErrorPromptIfOperationFails);
   
-  bool checkIfAlreadySaved(std::string tableName, std::string databaseColumn, std::string columnValue); // quite related to this project and to the type of table the db has
+  bool checkIfAlreadySaved(bool isSimilar, std::string tableName, std::string databaseColumn, std::string columnValue); // quite related to this project and to the type of table the db has
 
   std::string privateQuoteSql(std::string stringToQuote_2); 
 
@@ -48,7 +48,8 @@ public:
   void setDBName(std::string databaseName);
 
   std::string quoteSql(std::string stringToQuote);
-  
+  std::string returnStringWithPercentage(std::string stringToUse);
+
   bool createDatabase();
   
   bool createDatabase(std::string directoryToCreateDBIn, std::string nameOfFolderToPutDBIn);
@@ -57,7 +58,7 @@ public:
   
   bool createTable(std::string tableName, std::vector<std::string> columnsNameAndType);
 
-  bool isRecordInDB(std::string tableName, std::string databaseColumn, std::string columnValue); // method strictly related to this project  
+  bool isRecordInDB(bool withSimilarResults, std::string tableName, std::string databaseColumn, std::string columnValue); // method strictly related to this project  
   // std::string createQueryStatement(std::string tableName, std::string parameter, std::string condition);
   bool doesNameAlreadyExist(std::string tableName, std::string nameToSearch); 
   

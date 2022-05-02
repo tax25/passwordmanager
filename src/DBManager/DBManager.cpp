@@ -30,13 +30,26 @@ bool DBManager::generalMethodToDoSomethingToDB(bool query, std::string sqlInstru
   return DB_SUCCESS;
 }
 
-bool DBManager::checkIfAlreadySaved(std::string tableName, std::string databaseColumn, std::string columnValue){
+bool DBManager::checkIfAlreadySaved(bool isSimilar, std::string tableName, std::string databaseColumn, std::string columnValue){
 
-  std::string sqlSearchStatement = "SELECT * FROM " 
-    + tableName 
+  std::string sqlSearchStatement = "";
+
+  if(isSimilar){
+  
+    sqlSearchStatement = "SELECT * FROM "
+    + tableName
     + " WHERE "
-    + databaseColumn + " = "
-    + privateQuoteSql(columnValue);  
+    + databaseColumn + " LIKE "
+    + privateQuoteSql(returnStringWithPercentage(columnValue));
+ 
+  }else{
+
+    sqlSearchStatement = "SELECT * FROM " 
+      + tableName 
+      + " WHERE "
+      + databaseColumn + " = "
+      + privateQuoteSql(columnValue);  
+  }
   
   sqlite3 *database;
   
@@ -88,11 +101,15 @@ int DBManager::callback(void *data, int argc, char** argv, char** azColName){
 
 }
 
-
 std::string DBManager::quoteSql(std::string stringToQuote){
   return std::string("'") + stringToQuote + std::string("'");
 }
 
+std::string DBManager::returnStringWithPercentage(std::string stringToUse){
+
+   return std::string("%") + stringToUse + std::string("%");
+
+}
 
 bool DBManager::createDatabase(){
 
@@ -206,15 +223,15 @@ bool DBManager::createTable(std::string tableName, std::vector<std::string> colu
   return DB_SUCCESS;
 }
 
-bool DBManager::isRecordInDB(std::string tableName, std::string databaseColumn, std::string columnValue){
+bool DBManager::isRecordInDB(bool withSimilarResults, std::string tableName, std::string databaseColumn, std::string columnValue){
   
-  return checkIfAlreadySaved(tableName, databaseColumn, columnValue);
+  return checkIfAlreadySaved(withSimilarResults, tableName, databaseColumn, columnValue);
 
 }
 
 bool DBManager::doesNameAlreadyExist(std::string tableName, std::string nameToSearch){
 
-  if(checkIfAlreadySaved(tableName, "WEBSITEORAPPNAME", nameToSearch) == RECORD_ALREADY_EXISTING){
+  if(checkIfAlreadySaved(false, tableName, "WEBSITEORAPPNAME", nameToSearch) == RECORD_ALREADY_EXISTING){
     return NAME_ALREADY_EXISTING; 
   }
   return NAME_NOT_EXISTING;
