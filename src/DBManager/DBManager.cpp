@@ -132,12 +132,22 @@ bool DBManager::createDatabase(std::string directoryToCreateDBIn, std::string na
 
   sqlite3 *database;
   int exit = 0;
-  std::string commandToCreateDir = "mkdir" + (std::string)" " + (std::string)directoryToCreateDBIn + (std::string) "/"  + (std::string)nameOfFolderToPutDBIn; 
-  const int creatingDirError = system(commandToCreateDir.c_str());
-  if(creatingDirError == -1){
-    std::cerr << "error creating directory" << std::endl;
+
+  struct stat dirInfo;
+  std::string dbFolderPath = directoryToCreateDBIn + "/" + nameOfFolderToPutDBIn;
+  
+  if(stat(dbFolderPath.c_str(), &dirInfo) != 0) {
+    std::string commandToCreateDir = "mkdir " + dbFolderPath;
+  	const int creatingDirError = system(commandToCreateDir.c_str());
+  	
+  	if(creatingDirError == -1){
+  	  std::cerr << "Error creating database directory in " << dbFolderPath << std::endl;
+  	  return false;
+  	}
   }
 
+
+  
   std::string dbPath = directoryToCreateDBIn + "/" + nameOfFolderToPutDBIn + "/" + dbName;
   databasePath = dbPath; // setting the private variable to the path here created so that i can use this var instead of re-writing everything always
   exit = sqlite3_open(databasePath.c_str(), &database);

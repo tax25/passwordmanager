@@ -3,6 +3,9 @@
 #include<iostream>
 #include<vector>
 #include<cstdlib>
+#include<sys/stat.h>
+#include<sys/types.h>
+
 #include"sqlite3/sqlite3.h"
 
 enum DBState{

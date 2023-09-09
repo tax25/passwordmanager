@@ -26,6 +26,7 @@ enum MainMenuChoices{
   MM_UPDATE_PASSWORD = 3,
   MM_JUST_PRINT_EVERY_PWD = 4,
   MM_EXIT = 5
+
 };
 
 enum CreatePasswordChoices{
@@ -68,7 +69,7 @@ void signalHandler(int signalNumber){
 
 }
 
-int main(void){
+int main(int argc, char* argv[]){
 
   int choice = 0;
 
@@ -87,23 +88,58 @@ int main(void){
   std::vector<std::string> columnsNameAndType = {"DATEOFRECORD DATE", "WEBSITEORAPPNAME TEXT", "PASSWORD TEXT"};
   dbManager.createTable(tableName, columnsNameAndType);
 
+  // gestione argomenti passati al momento della chiamata
+  std::cout << argc << std::endl;
+ //  for(short int i = 0; i < argc; ++i) {
+	// std::cout << argv[i] << "index: " << i << std::endl;
+ //  }
+
+  if (argc > 1) {
+
+	// first number after the name of the program is the function you want
+	switch (std::atoi(argv[1])) {
+
+		case MM_CREATE_PASSWORD:
+			break;
+			
+		case MM_SEARCH_PASSWORD:
+			break;
+
+		case MM_UPDATE_PASSWORD:
+			break;
+
+		case MM_JUST_PRINT_EVERY_PWD:	
+			choice = 4;
+			break;
+
+		case MM_EXIT:
+			break;
+		
+	}
+  	
+  }
+  std::cout << "Dev exit" << std::endl;
+  // exit(0);
+    
   do{
 
     system("clear");
 
-    welcomeUser();
 
-    showChoices();
+	if (choice == 0) {
+	    welcomeUser();
 
-    //        std::cin fails
-    while(not(std::cin >> choice) || ((choice < MINIMUM_CHOICE)||(choice > MAXIMUM_CHOICE))){
-
-      std::cout << "Please insert a number between the possible choices" << std::endl;
-      std::cin.clear();
-
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-
+		showChoices();
+		//        std::cin fails
+		while(not(std::cin >> choice) || ((choice < MINIMUM_CHOICE)||(choice > MAXIMUM_CHOICE))){
+		
+			std::cout << "Please insert a number between the possible choices" << std::endl;
+			std::cin.clear();
+		
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		}
+	}
+    
     switch(choice){
 
         case MM_CREATE_PASSWORD:
