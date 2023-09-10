@@ -62,7 +62,7 @@ std::string generatePassword(short int length, std::vector<bool> specialChararac
 char selectCharacterFromString(std::string stringToUse);
 void showGeneratedPassword(std::string stringToUse);
 
-void signalHandler(int signalNumber){
+void signalHandler(int signalCode){
 
   system("clear");
   exit(1);
@@ -88,18 +88,13 @@ int main(int argc, char* argv[]){
   std::vector<std::string> columnsNameAndType = {"DATEOFRECORD DATE", "WEBSITEORAPPNAME TEXT", "PASSWORD TEXT"};
   dbManager.createTable(tableName, columnsNameAndType);
 
-  // gestione argomenti passati al momento della chiamata
-  std::cout << argc << std::endl;
- //  for(short int i = 0; i < argc; ++i) {
-	// std::cout << argv[i] << "index: " << i << std::endl;
- //  }
-
   if (argc > 1) {
 
 	// first number after the name of the program is the function you want
 	switch (std::atoi(argv[1])) {
 
 		case MM_CREATE_PASSWORD:
+			choice = 1;
 			break;
 			
 		case MM_SEARCH_PASSWORD:
@@ -118,7 +113,7 @@ int main(int argc, char* argv[]){
 	}
   	
   }
-  std::cout << "Dev exit" << std::endl;
+  // std::cout << "Dev exit" << std::endl;
   // exit(0);
     
   do{
@@ -386,6 +381,7 @@ int main(int argc, char* argv[]){
           system("clear");
           return 0;
     }
+    choice = 0;
   }while(askForSomething("Do you want to do some other operation? (0/1)", "Please insert 0 or 1"));
   system("clear");
 }
